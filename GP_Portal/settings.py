@@ -14,6 +14,8 @@ from pathlib import Path
 import firebase_admin
 from firebase_admin import credentials
 import os
+import json
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -129,9 +131,12 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-FIREBASE_CREDENTIALS = os.path.join(BASE_DIR, 'firebase_credentials.json')
-cred = credentials.Certificate(FIREBASE_CREDENTIALS)
-firebase_admin.initialize_app(cred)
+firebase_credentials_json = os.getenv("FIREBASE_CREDENTIALS")
+
+if firebase_credentials_json:
+    cred = credentials.Certificate(json.loads(firebase_credentials_json))
+else:
+    raise ValueError("Firebase credentials are missing!")
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
