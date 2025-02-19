@@ -14,7 +14,8 @@ from pathlib import Path
 import os
 import json
 import firebase_admin
-from firebase_admin import credentials
+import base64
+from firebase_admin import credentials, initialize_app
 
 
 
@@ -132,15 +133,19 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Load Firebase credentials from environment variable
-firebase_credentials_json = os.getenv('FIREBASE_CREDENTIALS_JSON')
+firebase_credentials_json = os.getenv("FIREBASE_CREDENTIALS")
 
 if firebase_credentials_json:
-    firebase_credentials = json.loads(base64.b64decode(firebase_credentials_json).decode())
-    cred = credentials.Certificate(firebase_credentials)
-    firebase_admin.initialize_app(cred)
+    try:
+        firebase_credentials = json.loads(
+            base64.b64decode(firebase_credentials_json).decode("utf-8")
+        )
+        cred = credentials.Certificate(firebase_credentials)
+        firebase_app = initialize_app(cred)
+    except Exception as e:
+        raise ValueError(f"Error loading Firebase credentials: {e}")
 else:
     raise ValueError("Firebase credentials are missing!")
-
 
 
 STATIC_URL = '/static/'
