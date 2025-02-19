@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import firebase_admin
-from firebase_admin import credentials
+from firebase_admin import credentials, firestore
 import os
 import json
 
@@ -131,16 +131,24 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Load Firebase credentials from environment variable
 firebase_credentials_json = os.getenv("FIREBASE_CREDENTIALS")
 
 if firebase_credentials_json:
     try:
         cred_data = json.loads(firebase_credentials_json)
         cred = credentials.Certificate(cred_data)
+        
+        if not firebase_admin._apps:
+            firebase_admin.initialize_app(cred)
+
     except json.JSONDecodeError as e:
         raise ValueError(f"Invalid Firebase credentials JSON: {e}")
 else:
     raise ValueError("Firebase credentials are missing!")
+
+db = firestore.client()
+
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
