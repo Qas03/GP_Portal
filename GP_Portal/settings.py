@@ -134,7 +134,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 firebase_credentials_json = os.getenv("FIREBASE_CREDENTIALS")
 
 if firebase_credentials_json:
-    cred = credentials.Certificate(json.loads(firebase_credentials_json))
+    try:
+        cred_data = json.loads(firebase_credentials_json)
+        cred = credentials.Certificate(cred_data)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid Firebase credentials JSON: {e}")
 else:
     raise ValueError("Firebase credentials are missing!")
 
