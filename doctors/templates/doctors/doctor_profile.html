@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Doctor Profile</title>
+</head>
+<body>
+    <h1>Welcome, Dr. {{ doctor.name }}</h1>
+    <p><strong>Specialty:</strong> {{ doctor.specialty }}</p>
+    <p><strong>Email:</strong> {{ doctor.email }}</p>
+
+    <h2>Your Appointments</h2>
+    {% if appointments %}
+        <ul>
+            {% for appointment in appointments %}
+                <li>
+                    <strong>Patient:</strong> {{ appointment.patient_id }} |
+                    <strong>Date:</strong> {{ appointment.date }} |
+                    <strong>Status:</strong> {{ appointment.status }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No appointments scheduled.</p>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,1 @@
+web: gunicorn GP_Portal.wsgi:application

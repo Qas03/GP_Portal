@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Patient Data</title>
+</head>
+<body>
+    <h1>Upload Patient Data</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="medical_notes">Medical Notes:</label><br>
+        <textarea id="medical_notes" name="medical_notes" rows="4" required></textarea><br><br>
+
+        <label for="prescription">Prescription:</label><br>
+        <textarea id="prescription" name="prescription" rows="4" required></textarea><br><br>
+
+        <label for="document">Attach File:</label><br>
+        <input type="file" id="document" name="document"><br><br>
+
+        <button type="submit">Upload</button>
+    </form>
+</body>
+</html>
