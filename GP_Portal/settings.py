@@ -11,10 +11,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-import firebase_admin
-from firebase_admin import credentials, firestore
 import os
 import json
+import firebase_admin
+from firebase_admin import credentials
 
 
 
@@ -49,8 +49,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware', 
     'whitenoise.middleware.WhiteNoiseMiddleware'
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -132,28 +132,21 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Load Firebase credentials from environment variable
-firebase_credentials_json = os.getenv("FIREBASE_CREDENTIALS")
+firebase_credentials_json = os.getenv('FIREBASE_CREDENTIALS_JSON')
 
 if firebase_credentials_json:
-    try:
-        cred_data = json.loads(firebase_credentials_json)
-        cred = credentials.Certificate(cred_data)
-        
-        if not firebase_admin._apps:
-            firebase_admin.initialize_app(cred)
-
-    except json.JSONDecodeError as e:
-        raise ValueError(f"Invalid Firebase credentials JSON: {e}")
+    firebase_credentials = json.loads(base64.b64decode(firebase_credentials_json).decode())
+    cred = credentials.Certificate(firebase_credentials)
+    firebase_admin.initialize_app(cred)
 else:
     raise ValueError("Firebase credentials are missing!")
 
-db = firestore.client()
 
 
 STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    os.path.join(BASE_DIR, 'static'),
 ]
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
